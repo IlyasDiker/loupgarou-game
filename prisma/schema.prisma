@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  email           String
+  password        String
+  username        String
+  picture         String
+  gameIDs         String[] @db.ObjectId
+  games           Game[]   @relation(fields: [gameIDs], references: [id])
+  actionsAuthored Action[] @relation("ActionAuthored")
+  actionsTargeted Action[] @relation("ActionTargeted")
+  assignements UserRole[]
+}
+
+model Role {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  label       String
+  description String
+  asignements UserRole[]
+}
+
+model Game {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  name    String
+  userIDs String[] @db.ObjectId
+  users   User[]   @relation(fields: [userIDs], references: [id])
+  rounds  Round[]
+  assignements UserRole[]
+}
+
+model Round {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  gameId  String   @db.ObjectId
+  game    Game     @relation(fields: [gameId], references: [id])
+  actions Action[]
+}
+
+model Action {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  roundId  String  @db.ObjectId
+  round    Round   @relation(fields: [roundId], references: [id])
+  authorId String  @db.ObjectId
+  author   User    @relation("ActionAuthored", fields: [authorId], references: [id])
+  targetId String? @db.ObjectId
+  target   User?   @relation("ActionTargeted", fields: [targetId], references: [id])
+}
+
+model UserRole {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  gameId  String @db.ObjectId
+  game    Game   @relation(fields: [gameId], references: [id])
+  userId  String @db.ObjectId
+  user    User   @relation(fields: [userId], references: [id])
+  roleId  String @db.ObjectId
+  role    Role   @relation(fields: [roleId], references: [id])
+}
