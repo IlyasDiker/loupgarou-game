@@ -3,14 +3,9 @@
         <Head>
 
         </Head>
-        <Body>
+        <Body class="bg-neutral-900 text-neutral-100">
             <div class="app">
-                <nav>
-                    <div>
-                        <NuxtLink to="/login">Login</NuxtLink> /
-                        <NuxtLink to="/register">Register</NuxtLink>
-                    </div>
-                </nav>
+                <NavbarUi/>
                 <slot></slot>
             </div>
         </Body>
